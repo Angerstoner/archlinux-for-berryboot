@@ -21,18 +21,20 @@ echo "    _          _    _    _                 _   ___ __  __ ";
 echo "   /_\  _ _ __| |_ | |  (_)_ _ _  ___ __  /_\ | _ \  \/  |";
 echo "  / _ \| '_/ _| ' \| |__| | ' \ || \ \ / / _ \|   / |\/| |";
 echo " /_/ \_\_| \__|_||_|____|_|_||_\_,_/_\_\/_/ \_\_|_\_|  |_|";
-echo " 2018.12.21                                               ";
 echo "------------------------------------------------------------";
 
 # Download URLs
-URL1="http://fl.us.mirror.archlinuxarm.org/os/ArchLinuxARM-rpi-latest.tar.gz"
-URL2="http://fl.us.mirror.archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz"
-URL3="http://fl.us.mirror.archlinuxarm.org/os/ArchLinuxARM-rpi-3-latest.tar.gz"
+URL1="http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-latest.tar.gz"
+URL2="http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz"
+URL3="http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-3-latest.tar.gz"
+URL4="http://os.archlinuxarm.org/os/ArchLinuxARM-rpi-4-latest.tar.gz"
+
 
 # Names for Converted OS Images
 NAME1="archlinuxarm_official_rpi1_zero_berryboot-$date.img"
 NAME2="archlinuxarm_official_rpi2_rpi3_berryboot-$date.img"
 NAME3="archlinuxarm_official_rpi3_berryboot-$date.img"
+NAME3="archlinuxarm_official_rpi4_berryboot-$date.img"
 
 echo ""
 echo "#### ARCHLINUX ARM OS IMAGE GENERATOR FOR BERRYBOOT ####"
@@ -40,7 +42,7 @@ echo ""
 
 # ArchLinux OS Image Menu Selection
 PS3='Please select your device: '
-options=("Raspberry Pi 1/Zero" "Raspberry Pi 2" "Raspberry Pi 3" "All Raspberry Pi Devices" "Exit")
+options=("Raspberry Pi 1/Zero" "Raspberry Pi 2" "Raspberry Pi 3" "Raspberry Pi 4" "All Raspberry Pi Devices" "Exit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -141,6 +143,40 @@ echo ""
 echo "-----------------------------------------------";
 echo "Support my project at: patreon.com/berryserver/";
 echo "-----------------------------------------------";
+			break
+            ;;
+        "Raspberry Pi 4")
+clear
+echo ""
+echo "#### DOWNLOADING OS IMAGE RPI4 ####"
+echo ""
+            wget $URL4
+			sudo mkdir ArchLinux4
+clear
+echo ""
+echo "#### DECOMPRESSING OS IMAGE RPI4 ####"
+echo ""
+			sudo bsdtar -xpf ArchLinuxARM-rpi-4-latest.tar.gz -C ArchLinux4
+clear
+echo ""
+echo "#### CONVERTING OS IMAGE TO BERRYBOOT RPI3 ####"
+echo ""
+			sudo sed -i 's/^\/dev\/mmcblk/#\0/g' ArchLinux4/etc/fstab
+			sudo sed -i 's/^\/dev\/root/#\0/g' ArchLinux4/etc/fstab
+			sudo sed -i 's/^\PARTUUID/#\0/g' ArchLinux4/etc/fstab
+			sudo sed -i 's/^\UUID/#\0/g' ArchLinux4/etc/fstab
+			sudo sed -i 's/^\LABEL/#\0/g' ArchLinux4/etc/fstab
+			sudo mksquashfs ArchLinux4/ $NAME4 -comp lzo -e lib/modules var/lib/pacman/local
+			sudo rm -f ArchLinuxARM-rpi-4-latest.tar.gz
+			sudo rm -rf ArchLinux4
+clear
+echo ""
+echo "#### IMAGE READY FOR RPI4 ####"
+echo ""
+echo "-----------------------------------------------";
+echo "Support my project at: patreon.com/berryserver/";
+echo "-----------------------------------------------";
+
 			break
             ;;			
 			"All Raspberry Pi Devices")
